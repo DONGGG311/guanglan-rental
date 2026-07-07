@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { MapPin, Building2 } from "lucide-react";
-import type { Space } from "@/types";
+import { STATUS_LABELS, type Space } from "@/types";
 import { cn, formatArea, formatMonthlyRent } from "@/lib/utils";
-import { AreaBadge } from "./Badge";
+import { AreaBadge, AvailabilityBadge } from "./Badge";
 
 interface SpaceCardProps {
   space: Space;
@@ -25,7 +25,7 @@ export function SpaceCard({ space, className }: SpaceCardProps) {
         {isRented && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40">
             <span className="rounded-full bg-white/90 px-4 py-1 text-sm font-medium text-slate-600">
-              已出租
+              {STATUS_LABELS.rented}
             </span>
           </div>
         )}
@@ -39,22 +39,7 @@ export function SpaceCard({ space, className }: SpaceCardProps) {
         {/* 标签行 */}
         <div className="mb-2 flex items-center gap-2">
           <AreaBadge category={space.area_category} />
-          <span
-            className={cn(
-              "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium",
-              space.status === "available"
-                ? "bg-green-100 text-green-700"
-                : space.status === "maintenance"
-                  ? "bg-amber-100 text-amber-700"
-                  : "bg-slate-100 text-slate-500"
-            )}
-          >
-            {space.status === "available"
-              ? "可租"
-              : space.status === "maintenance"
-                ? "维护中"
-                : "已出租"}
-          </span>
+          <AvailabilityBadge status={space.status} />
         </div>
 
         {/* 厂房名称 */}

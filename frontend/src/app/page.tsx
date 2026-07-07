@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   Search,
   ArrowRight,
@@ -10,6 +13,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { FeaturedSpaces } from "@/components/FeaturedSpaces";
 
 export default function HomePage() {
+  const router = useRouter();
   return (
     <div>
       {/* ========== Hero ========== */}
@@ -30,6 +34,10 @@ export default function HomePage() {
                 placeholder="搜索厂房名称、地址、面积..."
                 size="lg"
                 className="shadow-lg"
+                onSearch={(keyword) =>
+                  router.push(`/spaces?keyword=${encodeURIComponent(keyword)}`)
+                }
+                buttonClassName="bg-amber-600 hover:bg-amber-700"
               />
             </div>
 

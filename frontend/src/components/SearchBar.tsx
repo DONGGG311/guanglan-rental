@@ -12,6 +12,7 @@ interface SearchBarProps {
   onFilterClick?: () => void;
   className?: string;
   size?: "default" | "lg";
+  buttonClassName?: string;
 }
 
 export function SearchBar({
@@ -22,6 +23,7 @@ export function SearchBar({
   onFilterClick,
   className,
   size = "default",
+  buttonClassName,
 }: SearchBarProps) {
   const [value, setValue] = useState(defaultValue);
 
@@ -79,7 +81,8 @@ export function SearchBar({
       <button
         type="submit"
         className={cn(
-          "flex-shrink-0 bg-teal-700 font-medium text-white transition-colors hover:bg-teal-800",
+          "flex-shrink-0 font-medium text-white transition-colors",
+          buttonClassName || "bg-teal-700 hover:bg-teal-800",
           isLg
             ? "mr-2 rounded-lg px-6 py-2 text-sm"
             : "mr-1.5 rounded-md px-4 py-1.5 text-xs"
