@@ -1,0 +1,56 @@
+{
+  "color": {
+    "primary": {
+      "$value": "#0F766E",
+      "$type": "color",
+      "description": "品牌主色 — 源自印刷油墨 Teal"
+    },
+    "secondary": {
+      "$value": "#334155",
+      "$type": "color",
+      "description": "工业灰蓝 — 钢结构质感"
+    },
+    "accent": {
+      "$value": "#D97706",
+      "$type": "color",
+      "description": "暖琥珀 CTA — 厂房灯光温暖色调"
+    },
+    "success": { "$value": "#16A34A", "$type": "color" },
+    "warning": { "$value": "#EA580C", "$type": "color" },
+    "error": { "$value": "#DC2626", "$type": "color" },
+    "info": { "$value": "#2563EB", "$type": "color" },
+    "background": { "$value": "#FAFAFA", "$type": "color" },
+    "surface": { "$value": "#FFFFFF", "$type": "color" },
+    "textPrimary": { "$value": "#1E293B", "$type": "color" },
+    "textSecondary": { "$value": "#64748B", "$type": "color" },
+    "border": { "$value": "#E2E8F0", "$type": "color" }
+  },
+  "typography": {
+    "fontFamily": {
+      "heading": { "$value": "Noto Sans SC, Inter, system-ui, sans-serif", "$type": "fontFamily" },
+      "body": { "$value": "Noto Sans SC, Inter, system-ui, sans-serif", "$type": "fontFamily" }
+    },
+    "fontSize": {
+      "h1": { "$value": "48px", "$type": "fontSize" },
+      "h2": { "$value": "36px", "$type": "fontSize" },
+      "h3": { "$value": "24px", "$type": "fontSize" },
+      "body": { "$value": "16px", "$type": "fontSize" },
+      "small": { "$value": "14px", "$type": "fontSize" }
+    }
+  },
+  "spacing": {
+    "xs": { "$value": "4px", "$type": "spacing" },
+    "sm": { "$value": "8px", "$type": "spacing" },
+    "md": { "$value": "16px", "$type": "spacing" },
+    "lg": { "$value": "24px", "$type": "spacing" },
+    "xl": { "$value": "32px", "$type": "spacing" },
+    "2xl": { "$value": "48px", "$type": "spacing" },
+    "section": { "$value": "64px", "$type": "spacing" }
+  },
+  "radius": {
+    "button": { "$value": "8px", "$type": "borderRadius" },
+    "card": { "$value": "12px", "$type": "borderRadius" },
+    "modal": { "$value": "16px", "$type": "borderRadius" },
+    "pill": { "$value": "9999px", "$type": "borderRadius" }
+  }
+}

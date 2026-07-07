@@ -1,0 +1,239 @@
+/* ============================================================
+   广澜租赁平台 — Design Tokens
+   三层架构: Primitive → Semantic → Component
+   ============================================================ */
+
+/* === PRIMITIVES (原始值) === */
+:root {
+  /* Color Palette — 来自品牌指南 */
+  --color-teal-50: #F0FDFA;
+  --color-teal-100: #CCFBF1;
+  --color-teal-200: #99F6E4;
+  --color-teal-500: #14B8A6;
+  --color-teal-600: #0D9488;
+  --color-teal-700: #0F766E;
+  --color-teal-800: #115E59;
+  --color-teal-900: #134E4A;
+
+  --color-slate-50: #F8FAFC;
+  --color-slate-100: #F1F5F9;
+  --color-slate-200: #E2E8F0;
+  --color-slate-300: #CBD5E1;
+  --color-slate-400: #94A3B8;
+  --color-slate-500: #64748B;
+  --color-slate-600: #475569;
+  --color-slate-700: #334155;
+  --color-slate-800: #1E293B;
+  --color-slate-900: #0F172A;
+
+  --color-amber-50: #FFFBEB;
+  --color-amber-100: #FEF3C7;
+  --color-amber-500: #F59E0B;
+  --color-amber-600: #D97706;
+  --color-amber-700: #B45309;
+
+  --color-green-50: #F0FDF4;
+  --color-green-100: #DCFCE7;
+  --color-green-600: #16A34A;
+  --color-green-700: #15803D;
+
+  --color-red-50: #FEF2F2;
+  --color-red-100: #FEE2E2;
+  --color-red-600: #DC2626;
+  --color-red-700: #B91C1C;
+
+  --color-blue-50: #EFF6FF;
+  --color-blue-100: #DBEAFE;
+  --color-blue-600: #2563EB;
+
+  --color-orange-500: #F97316;
+  --color-orange-600: #EA580C;
+
+  --color-white: #FFFFFF;
+  --color-gray-50: #FAFAFA;
+
+  /* Spacing (4px base) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+
+  /* Typography Scale */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.2;
+  --line-height-snug: 1.35;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.6;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-default: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-default: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+  /* Duration */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+}
+
+/* === SEMANTIC (语义层) === */
+:root {
+  /* Background */
+  --color-background: var(--color-gray-50);
+  --color-surface: var(--color-white);
+  --color-foreground: var(--color-slate-800);
+
+  /* Primary */
+  --color-primary: var(--color-teal-700);
+  --color-primary-hover: var(--color-teal-800);
+  --color-primary-light: var(--color-teal-100);
+  --color-primary-on: var(--color-white);
+
+  /* Secondary */
+  --color-secondary: var(--color-slate-700);
+  --color-secondary-light: var(--color-slate-100);
+  --color-secondary-on: var(--color-white);
+
+  /* Accent (CTA) */
+  --color-accent: var(--color-amber-600);
+  --color-accent-hover: var(--color-amber-700);
+  --color-accent-light: var(--color-amber-100);
+  --color-accent-on: var(--color-white);
+
+  /* Text */
+  --color-text-primary: var(--color-slate-800);
+  --color-text-secondary: var(--color-slate-500);
+  --color-text-muted: var(--color-slate-400);
+
+  /* Border */
+  --color-border: var(--color-slate-200);
+  --color-border-focus: var(--color-teal-700);
+
+  /* States */
+  --color-success: var(--color-green-600);
+  --color-success-bg: var(--color-green-50);
+  --color-success-border: var(--color-green-100);
+
+  --color-warning: var(--color-orange-600);
+  --color-warning-bg: var(--color-amber-50);
+  --color-warning-border: var(--color-amber-100);
+
+  --color-error: var(--color-red-600);
+  --color-error-bg: var(--color-red-50);
+  --color-error-border: var(--color-red-100);
+
+  --color-info: var(--color-blue-600);
+  --color-info-bg: var(--color-blue-50);
+  --color-info-border: var(--color-blue-100);
+
+  /* Spacing */
+  --spacing-section: var(--space-16);
+  --spacing-component: var(--space-6);
+  --spacing-element: var(--space-4);
+  --spacing-tight: var(--space-2);
+
+  /* Typography */
+  --font-heading: 'Noto Sans SC', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-body: 'Noto Sans SC', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+/* === COMPONENT TOKENS (组件层) === */
+:root {
+  /* ── Button ── */
+  --btn-primary-bg: var(--color-primary);
+  --btn-primary-fg: var(--color-primary-on);
+  --btn-primary-hover: var(--color-primary-hover);
+  --btn-primary-radius: var(--radius-default);
+  --btn-primary-px: var(--space-6);
+  --btn-primary-py: var(--space-2);
+
+  --btn-secondary-bg: transparent;
+  --btn-secondary-fg: var(--color-primary);
+  --btn-secondary-border: var(--color-primary);
+  --btn-secondary-hover: var(--color-primary-light);
+
+  --btn-cta-bg: var(--color-accent);
+  --btn-cta-fg: var(--color-accent-on);
+  --btn-cta-hover: var(--color-accent-hover);
+
+  --btn-ghost-bg: transparent;
+  --btn-ghost-fg: var(--color-text-secondary);
+
+  --btn-height-sm: 32px;
+  --btn-height-default: 40px;
+  --btn-height-lg: 48px;
+
+  /* ── Input ── */
+  --input-bg: var(--color-surface);
+  --input-border: var(--color-border);
+  --input-focus-ring: var(--color-border-focus);
+  --input-padding: var(--space-2) var(--space-3);
+  --input-radius: var(--radius-default);
+  --input-height: 40px;
+  --input-disabled-bg: var(--color-secondary-light);
+
+  /* ── Card ── */
+  --card-bg: var(--color-surface);
+  --card-border: var(--color-border);
+  --card-radius: var(--radius-lg);     /* 12px */
+  --card-shadow: var(--shadow-sm);
+  --card-shadow-hover: var(--shadow-md);
+  --card-padding: var(--space-6);
+  --card-gap: var(--space-4);
+
+  /* ── Badge/Tag ── */
+  --badge-radius: var(--radius-full);
+  --badge-padding-sm: var(--space-1) var(--space-2);
+  --badge-padding-default: 4px 10px;
+
+  /* ── Table ── */
+  --table-header-bg: var(--color-secondary-light);
+  --table-row-hover: var(--color-slate-50);
+  --table-cell-padding: 12px 16px;
+  --table-row-height: 48px;
+
+  /* ── Dialog/Modal ── */
+  --dialog-radius: var(--radius-xl);
+  --dialog-shadow: var(--shadow-lg);
+  --dialog-padding: var(--space-6);
+  --dialog-max-width: 512px;
+
+  /* ── Navigation ── */
+  --navbar-height: 64px;
+  --navbar-bg: var(--color-surface);
+  --navbar-border: var(--color-border);
+}
+
+/* === DARK MODE (预留) === */
+/* .dark { ... } */

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .hero {
+    width: 1920px;
+    height: 600px;
+    background: #0F766E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    font-family: 'Noto Sans SC', 'Inter', system-ui, sans-serif;
+  }
+
+  /* Subtle gradient overlay */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(20,184,166,0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 50%, rgba(15,118,110,0.5) 0%, transparent 50%);
+    z-index: 0;
+  }
+
+  /* Large abstract factory shape (left side) */
+  .factory-shape {
+    position: absolute;
+    left: 120px;
+    bottom: 0;
+    width: 420px;
+    height: 460px;
+    z-index: 1;
+  }
+  .factory-body {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 420px;
+    height: 380px;
+    border: 2px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.03);
+  }
+  .factory-roof {
+    position: absolute;
+    bottom: 380px;
+    left: -20px;
+    width: 0;
+    height: 0;
+    border-left: 230px solid transparent;
+    border-right: 230px solid transparent;
+    border-bottom: 60px solid rgba(255,255,255,0.06);
+  }
+  .factory-window {
+    position: absolute;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .fw-1 { width: 60px; height: 40px; bottom: 280px; left: 40px; }
+  .fw-2 { width: 60px; height: 40px; bottom: 280px; left: 160px; }
+  .fw-3 { width: 60px; height: 40px; bottom: 280px; left: 280px; }
+  .fw-4 { width: 60px; height: 40px; bottom: 180px; left: 40px; }
+  .fw-5 { width: 60px; height: 40px; bottom: 180px; left: 160px; }
+  .fw-6 { width: 60px; height: 40px; bottom: 180px; left: 280px; }
+  .factory-door {
+    position: absolute;
+    bottom: 0;
+    left: 160px;
+    width: 100px;
+    height: 120px;
+    border: 2px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.04);
+    border-bottom: none;
+  }
+
+  /* Geometric accent shapes (right side) */
+  .accent-shapes { position: absolute; right: 0; top: 0; bottom: 0; z-index: 1; }
+  .shape {
+    position: absolute;
+    border: 1.5px solid rgba(255,255,255,0.08);
+    background: rgba(255,255,255,0.02);
+  }
+  .shape-1 { width: 200px; height: 140px; top: 80px; right: 80px; }
+  .shape-1::after {
+    content: '';
+    position: absolute; top: -30px; left: 50px;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 30px solid rgba(255,255,255,0.04);
+  }
+  .shape-2 { width: 120px; height: 80px; top: 320px; right: 200px; }
+  .shape-3 { width: 150px; height: 100px; bottom: 100px; right: 140px; }
+  .shape-3::after {
+    content: '';
+    position: absolute; top: -22px; left: 35px;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-bottom: 22px solid rgba(255,255,255,0.04);
+  }
+
+  /* Subtle dot grid in background */
+  .dot-grid {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 0;
+  }
+
+  /* Main content */
+  .content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    text-align: center;
+    padding: 0 60px;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.05em;
+    margin-bottom: 24px;
+  }
+
+  h1 {
+    font-size: 56px;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1.25;
+    letter-spacing: 0.01em;
+    margin-bottom: 16px;
+  }
+  h1 .highlight {
+    color: #FDE68A;
+  }
+
+  .desc {
+    font-size: 18px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.6;
+    margin-bottom: 32px;
+  }
+
+  /* Search bar */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+    border-radius: 12px;
+    height: 52px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    overflow: hidden;
+  }
+  .search-icon {
+    padding: 0 16px;
+    color: #94A3B8;
+    font-size: 20px;
+  }
+  .search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #1E293B;
+    font-family: inherit;
+  }
+  .search-input::placeholder { color: #94A3B8; }
+  .search-btn {
+    background: #D97706;
+    color: #FFFFFF;
+    border: none;
+    padding: 0 28px;
+    height: 100%;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .search-btn:hover { background: #B45309; }
+
+  /* Quick links */
+  .quick-links {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  .quick-link {
+    padding: 6px 18px;
+    border-radius: 9999px;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    transition: background 0.2s;
+  }
+  .quick-link:hover { background: rgba(255,255,255,0.2); }
+
+  /* Bottom accent bar */
+  .bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FBBF24 0%, #F59E0B 50%, #D97706 100%);
+    z-index: 3;
+  }
+</style>
+</head>
+<body>
+  <div class="hero">
+
+    <!-- Dot grid background -->
+    <div class="dot-grid"></div>
+
+    <!-- Abstract factory illustration (left) -->
+    <div class="factory-shape">
+      <div class="factory-body"></div>
+      <div class="factory-roof"></div>
+      <div class="factory-window fw-1"></div>
+      <div class="factory-window fw-2"></div>
+      <div class="factory-window fw-3"></div>
+      <div class="factory-window fw-4"></div>
+      <div class="factory-window fw-5"></div>
+      <div class="factory-window fw-6"></div>
+      <div class="factory-door"></div>
+    </div>
+
+    <!-- Right side geometric shapes -->
+    <div class="accent-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="badge">广澜印刷包装有限公司</div>
+
+      <h1>
+        印刷人的厂房，<span class="highlight">就该懂你。</span>
+      </h1>
+
+      <p class="desc">
+        为印刷包装同行提供配套齐全、参数透明的专业厂房租赁服务
+      </p>
+
+      <!-- Search bar -->
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input class="search-input" type="text" placeholder="搜索厂房名称、面积、地址...">
+        <button class="search-btn">搜索厂房</button>
+      </div>
+
+      <!-- Quick links -->
+      <div class="quick-links">
+        <a class="quick-link" href="#">小型厂房 &lt;100㎡</a>
+        <a class="quick-link" href="#">中型厂房 100-500㎡</a>
+        <a class="quick-link" href="#">大型厂房 &gt;500㎡</a>
+      </div>
+    </div>
+
+    <div class="bottom-bar"></div>
+  </div>
+</body>
+</html>
