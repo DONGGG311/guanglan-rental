@@ -1,4 +1,4 @@
-import type { PaginatedResponse, Space } from "@/types";
+import type { Order, PaginatedResponse, Space } from "@/types";
 
 const API_BASE = "";
 
@@ -29,6 +29,7 @@ async function request<T>(
 }
 
 export const api = {
+  /* ========== 厂房 ========== */
   getSpaces: (params: Record<string, string>) =>
     request<PaginatedResponse<Space>>(
       `/api/spaces?${new URLSearchParams(params)}`
@@ -36,6 +37,7 @@ export const api = {
 
   getSpace: (id: number) => request<Space>(`/api/spaces/${id}`),
 
+  /* ========== 认证 ========== */
   login: (data: { phone: string; password: string }) =>
     request<{ access_token: string }>("/api/auth/login", {
       method: "POST",
@@ -52,4 +54,30 @@ export const api = {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
+  /* ========== 订单 ========== */
+  createOrder: (data: {
+    space_id: number;
+    contact_name: string;
+    contact_phone: string;
+    contact_email?: string;
+    rent_type: string;
+    start_date: string;
+    duration: number;
+    notes?: string;
+  }) =>
+    request<Order>("/api/orders", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  getMyOrders: (params?: Record<string, string>) =>
+    request<PaginatedResponse<Order>>(
+      `/api/orders?${new URLSearchParams(params || {})}`
+    ),
+
+  getOrder: (id: number) => request<Order>(`/api/orders/${id}`),
+
+  renewOrder: (id: number) =>
+    request<Order>(`/api/orders/${id}/renew`, { method: "POST" }),
 };

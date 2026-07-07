@@ -32,6 +32,7 @@ import {
 } from "@/lib/utils";
 import { AreaBadge, AvailabilityBadge } from "@/components/Badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OrderForm } from "@/components/OrderForm";
 
 export default function SpaceDetailPage({
   params,
@@ -45,6 +46,7 @@ export default function SpaceDetailPage({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentImage, setCurrentImage] = useState(0);
+  const [orderFormOpen, setOrderFormOpen] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -382,6 +384,7 @@ export default function SpaceDetailPage({
             <div className="mt-5 space-y-2.5">
               <button
                 disabled={space.status !== "available"}
+                onClick={() => setOrderFormOpen(true)}
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-amber-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 立即租赁
@@ -404,6 +407,7 @@ export default function SpaceDetailPage({
         </div>
         <button
           disabled={space.status !== "available"}
+          onClick={() => setOrderFormOpen(true)}
           className="rounded-lg bg-amber-600 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           立即租赁
@@ -412,6 +416,14 @@ export default function SpaceDetailPage({
 
       {/* 底部占位（避免被固定栏遮挡） */}
       <div className="h-16 lg:hidden" />
+
+      {/* ========== 下单弹窗 ========== */}
+      <OrderForm
+        open={orderFormOpen}
+        onOpenChange={setOrderFormOpen}
+        spaceId={space.id}
+        spaceName={space.name}
+      />
     </div>
   );
 }
