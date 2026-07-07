@@ -2,13 +2,10 @@
 
 import { useEffect, useState, use } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   Building2,
   MapPin,
-  Calendar,
-  Clock,
   RefreshCw,
   Loader2,
   FileText,
@@ -29,12 +26,12 @@ export default function OrderDetailPage({
 }) {
   const { id } = use(params);
   const orderId = Number(id);
-  const router = useRouter();
 
   const [order, setOrder] = useState<Order | null>(null);
   const [space, setSpace] = useState<Space | null>(null);
   const [loading, setLoading] = useState(true);
   const [renewing, setRenewing] = useState(false);
+  const [spaceError, setSpaceError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -48,8 +45,11 @@ export default function OrderDetailPage({
           try {
             const spaceData = await api.getSpace(orderData.space_id);
             if (!cancelled) setSpace(spaceData);
-          } catch {
-            // 空间加载失败不阻断整体
+          } catch (err) {
+            if (!cancelled) {
+              setSpaceError(true);
+              console.warn("厂房信息加载失败:", err);
+            }
           }
         }
       } catch (err) {
@@ -129,13 +129,13 @@ export default function OrderDetailPage({
   return (
     <div className="space-y-6">
       {/* 返回按钮 */}
-      <button
-        onClick={() => router.back()}
+      <Link
+        href="/user/orders"
         className="inline-flex items-center gap-1 text-sm text-slate-500 transition-colors hover:text-teal-700"
       >
         <ArrowLeft className="h-4 w-4" />
         返回订单列表
-      </button>
+      </Link>
 
       {/* ========== 订单信息 ========== */}
       <section className="rounded-xl border border-slate-200 bg-white p-6">
@@ -186,6 +186,10 @@ export default function OrderDetailPage({
               查看厂房详情 &rarr;
             </Link>
           </div>
+        ) : spaceError ? (
+          <p className="text-sm text-red-500">
+            厂房信息加载失败
+          </p>
         ) : (
           <p className="text-sm text-slate-400">
             厂房 ID：{order.space_id}
