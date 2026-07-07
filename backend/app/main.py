@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.database import engine, Base
+from app.models import user, space, order, contract, favorite, notification  # noqa: F401
 
 app = FastAPI(title="广澜租赁平台 API", version="1.0")
 
