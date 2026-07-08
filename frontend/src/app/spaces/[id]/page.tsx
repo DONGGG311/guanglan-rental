@@ -19,7 +19,9 @@ import {
   Car,
   Package,
   Heart,
+  Loader2,
 } from "lucide-react";
+import { toast } from "sonner";
 import type { Space } from "@/types";
 import { api } from "@/lib/api";
 import {
@@ -47,6 +49,8 @@ export default function SpaceDetailPage({
   const [error, setError] = useState<string | null>(null);
   const [currentImage, setCurrentImage] = useState(0);
   const [orderFormOpen, setOrderFormOpen] = useState(false);
+  const [favorited, setFavorited] = useState(false);
+  const [togglingFav, setTogglingFav] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -68,6 +72,43 @@ export default function SpaceDetailPage({
       cancelled = true;
     };
   }, [spaceId]);
+
+  // 检查是否已收藏
+  useEffect(() => {
+    let cancelled = false;
+    async function checkFav() {
+      try {
+        const data = await api.getFavorites();
+        if (!cancelled) {
+          const isFav = (data.items || []).some(
+            (f) => f.space_id === spaceId
+          );
+          setFavorited(isFav);
+        }
+      } catch {
+        // 未登录或加载失败，忽略
+      }
+    }
+    if (!isNaN(spaceId)) checkFav();
+    return () => {
+      cancelled = true;
+    };
+  }, [spaceId]);
+
+  const handleToggleFav = async () => {
+    if (togglingFav) return;
+    setTogglingFav(true);
+    try {
+      const result = await api.toggleFavorite(spaceId);
+      setFavorited(result.favorited);
+      toast.success(result.message);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "操作失败";
+      toast.error(msg);
+    } finally {
+      setTogglingFav(false);
+    }
+  };
 
   /* ========== 加载态 ========== */
   if (loading) {
@@ -389,9 +430,22 @@ export default function SpaceDetailPage({
               >
                 立即租赁
               </button>
-              <button className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50">
-                <Heart className="h-4 w-4" />
-                收藏
+              <button
+                onClick={handleToggleFav}
+                disabled={togglingFav}
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-6 py-3 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 disabled:opacity-50"
+              >
+                {togglingFav ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Heart
+                    className={cn(
+                      "h-4 w-4",
+                      favorited && "fill-red-500 text-red-500"
+                    )}
+                  />
+                )}
+                {favorited ? "已收藏" : "收藏"}
               </button>
             </div>
           </div>

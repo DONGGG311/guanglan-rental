@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app.models.order import Order
 from app.models.space import Space
+from app.routers.notifications import create_notification
 from app.schemas.order import OrderCreate, OrderListResponse, OrderResponse
 from app.services.auth import decode_token
 from app.utils.order_no import generate_order_no
@@ -72,6 +73,16 @@ def create_order(
     db.add(order)
     db.commit()
     db.refresh(order)
+
+    # Create notification for authenticated users
+    if user_id:
+        create_notification(
+            db,
+            user_id=user_id,
+            title="订单已提交",
+            content=f"您的订单 {order_no}（{space.name}）已成功提交，请等待审核。",
+            notif_type="order_update",
+        )
 
     # --- Build response with space name ---
     resp = OrderResponse.model_validate(order)
@@ -189,6 +200,16 @@ def renew_order(order_id: int, db: Session = Depends(get_db)):
     db.add(new_order)
     db.commit()
     db.refresh(new_order)
+
+    # Create notification for authenticated users
+    if new_order.user_id:
+        create_notification(
+            db,
+            user_id=new_order.user_id,
+            title="续租订单已提交",
+            content=f"您的续租订单 {order_no}（{space.name}）已成功提交，请等待审核。",
+            notif_type="order_update",
+        )
 
     resp = OrderResponse.model_validate(new_order)
     resp.space_name = space.name

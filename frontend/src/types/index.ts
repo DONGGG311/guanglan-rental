@@ -78,3 +78,26 @@ export const ORDER_STATUS_LABELS: Record<string, string> = {
   completed: "已完成",
   cancelled: "已取消",
 };
+
+export interface FavoriteItem {
+  id: number;
+  space_id: number;
+  space_name: string;
+  area: number;
+  area_category: string;
+  monthly_rent: number;
+  yearly_rent: number;
+  address: string;
+  status: string;
+  images: string | null;
+  created_at: string | null;
+}
+
+export interface NotificationItem {
+  id: number;
+  title: string;
+  content: string | null;
+  is_read: boolean;
+  type: string;
+  created_at: string | null;
+}
