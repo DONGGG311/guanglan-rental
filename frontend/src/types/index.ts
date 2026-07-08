@@ -93,6 +93,23 @@ export interface FavoriteItem {
   created_at: string | null;
 }
 
+export interface Contract {
+  id: number;
+  order_id: number;
+  contract_no: string;
+  party_a: string;
+  party_b: string;
+  space_name: string;
+  rent_type: string;
+  start_date: string;
+  end_date: string;
+  rent_amount: number;
+  deposit: string | null;
+  terms: string | null;
+  html_content: string | null;
+  created_at: string | null;
+}
+
 export interface NotificationItem {
   id: number;
   title: string;

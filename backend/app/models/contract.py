@@ -18,5 +18,6 @@ class Contract(Base):
     rent_amount = Column(Float, nullable=False)
     deposit = Column(String(50), nullable=True)  # 押金（面议文字）
     terms = Column(Text, nullable=True)  # 合同条款
-    file_path = Column(String(255), nullable=True)  # 生成 PDF 路径
+    html_content = Column(Text, nullable=True)  # 生成的合同 HTML 内容
+    file_path = Column(String(255), nullable=True)  # 生成 PDF 路径（保留兼容）
     created_at = Column(DateTime, server_default=func.now())

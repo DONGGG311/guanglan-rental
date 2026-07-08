@@ -4,6 +4,7 @@ import type {
   Space,
   FavoriteItem,
   NotificationItem,
+  Contract,
 } from "@/types";
 
 const API_BASE = "";
@@ -133,4 +134,11 @@ export const api = {
     request<NotificationItem>(`/api/notifications/${id}/read`, {
       method: "PUT",
     }),
+
+  /* ========== 合同 ========== */
+  getContractInfo: (orderId: number) =>
+    request<Contract>(`/api/orders/${orderId}/contract/info`),
+
+  getAdminContractInfo: (orderId: number) =>
+    request<Contract>(`/admin/orders/${orderId}/contract/info`),
 };
