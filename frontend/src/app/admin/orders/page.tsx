@@ -196,7 +196,7 @@ export default function AdminOrdersPage() {
             setStatusFilter(e.target.value);
             setPage(1);
           }}
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-teal-500"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-teal-500 sm:w-auto"
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -215,7 +215,7 @@ export default function AdminOrdersPage() {
             }
           }}
           placeholder="搜索订单号、联系人、电话..."
-          className="rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-teal-500"
+          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-teal-500 sm:w-auto sm:flex-1"
         />
         <button
           onClick={() => {

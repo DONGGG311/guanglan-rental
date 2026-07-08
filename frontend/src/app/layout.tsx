@@ -18,9 +18,12 @@ const notoSansSC = Noto_Sans_SC({
 });
 
 export const metadata: Metadata = {
-  title: "广澜厂房租赁平台",
+  title: {
+    default: "广澜租赁 - 印刷人的厂房租赁平台",
+    template: "%s | 广澜租赁",
+  },
   description:
-    "专业印刷包装厂房租赁平台 — 懂印刷行业的厂房租赁，真实参数、清晰定价",
+    "广澜印刷包装有限公司旗下厂房租赁平台，提供配套齐全、参数透明的专业印刷包装生产空间租赁服务",
 };
 
 export default function RootLayout({

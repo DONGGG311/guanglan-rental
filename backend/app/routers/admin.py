@@ -7,7 +7,7 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, Query, UploadFile
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
@@ -22,6 +22,7 @@ from app.routers.auth import get_current_admin, get_current_user
 from app.routers.notifications import create_notification
 from app.schemas.contract import ContractCreate, ContractResponse
 from app.services.contract import generate_contract_html
+from app.services.email import notify_user_order_status
 from app.utils.contract_no import generate_contract_no
 
 router = APIRouter()
@@ -637,6 +638,7 @@ STATUS_NOTIFICATION_MAP = {
 def update_order_status(
     order_id: int,
     payload: StatusUpdatePayload,
+    background_tasks: BackgroundTasks,
     current_admin: Admin = Depends(get_current_admin),
     db: Session = Depends(get_db),
 ):
@@ -678,6 +680,17 @@ def update_order_status(
             content=content_template.format(order_no=order.order_no, space_name=space_name),
             notif_type="order_update",
         )
+
+        # --- Send status-change email to user (background task) ---
+        user = db.query(User).filter(User.id == order.user_id).first()
+        if user and user.email:
+            background_tasks.add_task(
+                notify_user_order_status,
+                user.email,
+                order.order_no,
+                space_name,
+                payload.status,
+            )
 
     return {"message": f"订单状态已更新为 {payload.status}", "status": payload.status}
 

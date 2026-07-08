@@ -2,7 +2,7 @@
 
 from datetime import datetime
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -11,6 +11,7 @@ from app.models.space import Space
 from app.routers.notifications import create_notification
 from app.schemas.order import OrderCreate, OrderListResponse, OrderResponse
 from app.services.auth import decode_token
+from app.services.email import notify_admin_new_order
 from app.utils.order_no import generate_order_no
 
 router = APIRouter()
@@ -24,6 +25,7 @@ router = APIRouter()
 @router.post("/api/orders", response_model=OrderResponse)
 def create_order(
     data: OrderCreate,
+    background_tasks: BackgroundTasks,
     authorization: str = Header(""),
     db: Session = Depends(get_db),
 ):
@@ -83,6 +85,20 @@ def create_order(
             content=f"您的订单 {order_no}（{space.name}）已成功提交，请等待审核。",
             notif_type="order_update",
         )
+
+    # --- Send email to admin (background task) ---
+    background_tasks.add_task(
+        notify_admin_new_order,
+        {
+            "order_no": order.order_no,
+            "contact_name": order.contact_name,
+            "contact_phone": order.contact_phone,
+            "space_name": space.name,
+            "rent_type": order.rent_type,
+            "duration": order.duration,
+            "total_amount": order.total_amount,
+        },
+    )
 
     # --- Build response with space name ---
     resp = OrderResponse.model_validate(order)
@@ -161,7 +177,11 @@ def get_order(order_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/api/orders/{order_id}/renew", response_model=OrderResponse)
-def renew_order(order_id: int, db: Session = Depends(get_db)):
+def renew_order(
+    order_id: int,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
     """Create a renewal order based on an existing order.
 
     Copies contact info, space, rent_type, and duration from the original.
@@ -210,6 +230,20 @@ def renew_order(order_id: int, db: Session = Depends(get_db)):
             content=f"您的续租订单 {order_no}（{space.name}）已成功提交，请等待审核。",
             notif_type="order_update",
         )
+
+    # --- Send email to admin (background task) ---
+    background_tasks.add_task(
+        notify_admin_new_order,
+        {
+            "order_no": new_order.order_no,
+            "contact_name": new_order.contact_name,
+            "contact_phone": new_order.contact_phone,
+            "space_name": space.name,
+            "rent_type": new_order.rent_type,
+            "duration": new_order.duration,
+            "total_amount": new_order.total_amount,
+        },
+    )
 
     resp = OrderResponse.model_validate(new_order)
     resp.space_name = space.name
