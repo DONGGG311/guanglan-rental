@@ -29,9 +29,12 @@ export interface Space {
 export interface Order {
   id: number;
   order_no: string;
+  user_id?: number | null;
   contact_name: string;
   contact_phone: string;
+  contact_email?: string | null;
   space_id: number;
+  space_name?: string;
   rent_type: "monthly" | "yearly";
   start_date: string;
   duration: number;
@@ -45,8 +48,9 @@ export interface Order {
     | "active"
     | "completed"
     | "cancelled";
-  admin_remark?: string;
+  admin_remark?: string | null;
   created_at: string;
+  updated_at?: string | null;
 }
 
 export interface PaginatedResponse<T> {

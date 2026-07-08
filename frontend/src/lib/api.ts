@@ -35,6 +35,45 @@ async function request<T>(
   return res.json();
 }
 
+/** Request helper that uses admin_token from localStorage. */
+async function adminRequest<T>(
+  path: string,
+  options?: RequestInit
+): Promise<T> {
+  const headers: HeadersInit = {};
+
+  // Do NOT set Content-Type for FormData (multipart)
+  if (!(options?.body instanceof FormData)) {
+    (headers as Record<string, string>)["Content-Type"] = "application/json";
+  }
+
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("admin_token");
+    if (token) {
+      (headers as Record<string, string>)["Authorization"] =
+        `Bearer ${token}`;
+    }
+  }
+
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(text || `请求失败 (${res.status})`);
+  }
+
+  return res.json();
+}
+
+export interface DashboardStats {
+  total_spaces: number;
+  available_spaces: number;
+  rented_spaces: number;
+  pending_orders: number;
+  total_orders: number;
+  vacancy_rate: number;
+}
+
 export const api = {
   /* ========== 厂房 ========== */
   getSpaces: (params: Record<string, string>) =>
@@ -141,4 +180,115 @@ export const api = {
 
   getAdminContractInfo: (orderId: number) =>
     request<Contract>(`/admin/orders/${orderId}/contract/info`),
+
+  /* ========== 管理员 ========== */
+
+  /** Admin login */
+  adminLogin: (data: { username: string; password: string }) =>
+    request<{ access_token: string }>("/admin/auth/login", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  /** Get admin profile */
+  adminMe: () =>
+    adminRequest<{ id: number; username: string; email: string }>(
+      "/admin/auth/me"
+    ),
+
+  /** Get dashboard stats */
+  getDashboard: () => adminRequest<DashboardStats>("/admin/dashboard"),
+
+  /* -- Spaces CRUD -- */
+
+  /** List all spaces (admin, includes unpublished) */
+  adminGetSpaces: (params?: Record<string, string>) =>
+    adminRequest<PaginatedResponse<Space>>(
+      `/admin/spaces?${new URLSearchParams(params || {})}`
+    ),
+
+  /** Create a space */
+  createSpace: (data: Partial<Space>) =>
+    adminRequest<Space>("/admin/spaces", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
+  /** Update a space */
+  updateSpace: (id: number, data: Partial<Space>) =>
+    adminRequest<Space>(`/admin/spaces/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }),
+
+  /** Delete a space */
+  deleteSpace: (id: number) =>
+    adminRequest<{ message: string }>(`/admin/spaces/${id}`, {
+      method: "DELETE",
+    }),
+
+  /** Toggle space publish status */
+  togglePublishSpace: (id: number) =>
+    adminRequest<Space>(`/admin/spaces/${id}/publish`, {
+      method: "PUT",
+    }),
+
+  /** Upload images for a space */
+  uploadSpaceImages: (spaceId: number, files: FileList | File[]) => {
+    const formData = new FormData();
+    const fileArray = Array.from(files);
+    fileArray.forEach((file) => formData.append("files", file));
+    return adminRequest<{ images: string[]; uploaded: string[] }>(
+      `/admin/spaces/${spaceId}/images`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+  },
+
+  /** Remove an image from a space */
+  removeSpaceImage: (spaceId: number, imageUrl: string) =>
+    adminRequest<{ images: string[] }>(`/admin/spaces/${spaceId}/images`, {
+      method: "DELETE",
+      body: JSON.stringify({ image_url: imageUrl }),
+    }),
+
+  /* -- Orders management -- */
+
+  /** List all orders (admin) */
+  adminGetOrders: (params?: Record<string, string>) =>
+    adminRequest<{ items: Order[]; total: number; page: number; page_size: number }>(
+      `/admin/orders?${new URLSearchParams(params || {})}`
+    ),
+
+  /** Get order detail (admin) */
+  adminGetOrder: (id: number) =>
+    adminRequest<Order & { space_name?: string }>(`/admin/orders/${id}`),
+
+  /** Update order status */
+  updateOrderStatus: (id: number, status: string) =>
+    adminRequest<{ message: string; status: string }>(
+      `/admin/orders/${id}/status`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ status }),
+      }
+    ),
+
+  /** Get contract info (admin) */
+  getContractInfoAdmin: (orderId: number) =>
+    adminRequest<Contract>(`/admin/orders/${orderId}/contract/info`),
+
+  /** Send manual notification */
+  sendNotification: (data: {
+    user_id: number;
+    title: string;
+    content: string;
+    notif_type?: string;
+  }) =>
+    adminRequest("/admin/notifications", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 };
