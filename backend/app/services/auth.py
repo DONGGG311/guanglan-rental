@@ -3,23 +3,22 @@
 from datetime import datetime, timedelta
 
 from jose import JWTError, jwt
-from passlib.context import CryptContext
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-SECRET_KEY = "guanglan-secret-key-change-in-production"
-ALGORITHM = "HS256"
-DEFAULT_EXPIRY = timedelta(hours=24)
+import bcrypt
 
 
 def hash_password(password: str) -> str:
     """Hash a plaintext password using bcrypt."""
-    return pwd_context.hash(password)
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(plain: str, hashed: str) -> bool:
     """Verify a plaintext password against a bcrypt hash."""
-    return pwd_context.verify(plain, hashed)
+    return bcrypt.checkpw(plain.encode("utf-8"), hashed.encode("utf-8"))
+
+
+SECRET_KEY = "guanglan-secret-key-change-in-production"
+ALGORITHM = "HS256"
+DEFAULT_EXPIRY = timedelta(hours=24)
 
 
 def create_token(data: dict, expires_delta: timedelta | None = None) -> str:
