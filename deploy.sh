@@ -1,17 +1,21 @@
 #!/bin/bash
 set -e
+
+# 跳过所有交互弹窗
+export DEBIAN_FRONTEND=noninteractive
+export NEEDRESTART_MODE=a
 echo "=== 广澜租赁平台 一键部署 ==="
 
 # 1. 安装依赖
 echo "[1/6] 安装系统依赖..."
 sudo apt update -qq
-sudo apt install -y -qq python3 python3-pip python3-venv nginx git curl
+sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt install -y -qq python3 python3-pip python3-venv nginx git curl
 
 # 2. 安装 Node.js 20
 echo "[2/6] 安装 Node.js 20..."
 sudo apt remove -y -qq libnode-dev libnode72 nodejs 2>/dev/null || true
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-sudo apt install -y -qq nodejs
+sudo NEEDRESTART_MODE=a DEBIAN_FRONTEND=noninteractive apt install -y -qq nodejs
 sudo npm install -g npm@latest --silent 2>/dev/null || true
 
 # 3. 进入项目
