@@ -38,7 +38,7 @@ PARTY_A = "广澜印刷包装有限公司"
 
 
 @router.post(
-    "/admin/orders/{order_id}/contract",
+    "/api/admin/orders/{order_id}/contract",
     response_model=ContractResponse,
     status_code=201,
 )
@@ -137,7 +137,7 @@ def generate_contract(
 
 
 @router.get(
-    "/admin/orders/{order_id}/contract",
+    "/api/admin/orders/{order_id}/contract",
     response_class=HTMLResponse,
 )
 def view_contract_admin(
@@ -222,7 +222,7 @@ def get_contract_info_user(
 
 
 @router.get(
-    "/admin/orders/{order_id}/contract/info",
+    "/api/admin/orders/{order_id}/contract/info",
     response_model=ContractResponse,
 )
 def get_contract_info_admin(
@@ -257,7 +257,7 @@ class DashboardStats(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-@router.get("/admin/dashboard", response_model=DashboardStats)
+@router.get("/api/admin/dashboard", response_model=DashboardStats)
 def dashboard_stats(
     current_admin: Admin = Depends(get_current_admin),
     db: Session = Depends(get_db),
@@ -338,7 +338,7 @@ class SpaceUpdate(BaseModel):
 # ---------------------------------------------------------------------------
 
 
-@router.get("/admin/spaces")
+@router.get("/api/admin/spaces")
 def admin_list_spaces(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -367,7 +367,7 @@ def admin_list_spaces(
 # ---------------------------------------------------------------------------
 
 
-@router.post("/admin/spaces", status_code=201)
+@router.post("/api/admin/spaces", status_code=201)
 def create_space(
     data: SpaceCreate,
     current_admin: Admin = Depends(get_current_admin),
@@ -386,7 +386,7 @@ def create_space(
 # ---------------------------------------------------------------------------
 
 
-@router.put("/admin/spaces/{space_id}")
+@router.put("/api/admin/spaces/{space_id}")
 def update_space(
     space_id: int,
     data: SpaceUpdate,
@@ -412,7 +412,7 @@ def update_space(
 # ---------------------------------------------------------------------------
 
 
-@router.delete("/admin/spaces/{space_id}")
+@router.delete("/api/admin/spaces/{space_id}")
 def delete_space(
     space_id: int,
     current_admin: Admin = Depends(get_current_admin),
@@ -433,7 +433,7 @@ def delete_space(
 # ---------------------------------------------------------------------------
 
 
-@router.put("/admin/spaces/{space_id}/publish")
+@router.put("/api/admin/spaces/{space_id}/publish")
 def toggle_publish(
     space_id: int,
     current_admin: Admin = Depends(get_current_admin),
@@ -455,7 +455,7 @@ def toggle_publish(
 # ---------------------------------------------------------------------------
 
 
-@router.post("/admin/spaces/{space_id}/images")
+@router.post("/api/admin/spaces/{space_id}/images")
 async def upload_space_images(
     space_id: int,
     files: list[UploadFile] = File(...),
@@ -510,7 +510,7 @@ class RemoveImagePayload(BaseModel):
     image_url: str
 
 
-@router.delete("/admin/spaces/{space_id}/images")
+@router.delete("/api/admin/spaces/{space_id}/images")
 def remove_space_image(
     space_id: int,
     payload: RemoveImagePayload,
@@ -547,7 +547,7 @@ def remove_space_image(
 # ---------------------------------------------------------------------------
 
 
-@router.get("/admin/orders")
+@router.get("/api/admin/orders")
 def admin_list_orders(
     status: str = Query("", description="Filter by order status"),
     keyword: str = Query("", description="Search by order_no, contact_name, or contact_phone"),
@@ -592,7 +592,7 @@ def admin_list_orders(
 # ---------------------------------------------------------------------------
 
 
-@router.get("/admin/orders/{order_id}")
+@router.get("/api/admin/orders/{order_id}")
 def admin_get_order(
     order_id: int,
     current_admin: Admin = Depends(get_current_admin),
@@ -634,7 +634,7 @@ STATUS_NOTIFICATION_MAP = {
 }
 
 
-@router.put("/admin/orders/{order_id}/status")
+@router.put("/api/admin/orders/{order_id}/status")
 def update_order_status(
     order_id: int,
     payload: StatusUpdatePayload,
@@ -707,7 +707,7 @@ class SendNotificationPayload(BaseModel):
     notif_type: str = "system"
 
 
-@router.post("/admin/notifications", status_code=201)
+@router.post("/api/admin/notifications", status_code=201)
 def send_notification(
     payload: SendNotificationPayload,
     current_admin: Admin = Depends(get_current_admin),

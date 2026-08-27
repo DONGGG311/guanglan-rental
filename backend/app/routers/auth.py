@@ -62,7 +62,7 @@ def login(data: UserLogin, db: Session = Depends(get_db)):
 # Admin login
 # ---------------------------------------------------------------------------
 
-@router.post("/admin/auth/login", response_model=Token)
+@router.post("/api/admin/auth/login", response_model=Token)
 def admin_login(data: AdminLogin, db: Session = Depends(get_db)):
     """Admin login with username + password. Returns a JWT access token."""
     admin = db.query(Admin).filter(Admin.username == data.username).first()
@@ -105,7 +105,7 @@ def get_current_admin(
     """Dependency: extract and validate the JWT bearer token for an admin.
 
     Usage:
-        @router.get("/admin/protected")
+        @router.get("/api/admin/protected")
         def my_route(current_admin: Admin = Depends(get_current_admin)):
             ...
     """
@@ -131,7 +131,7 @@ def me(current_user: User = Depends(get_current_user)):
     return {"id": current_user.id, "name": current_user.name, "phone": current_user.phone}
 
 
-@router.get("/admin/auth/me")
+@router.get("/api/admin/auth/me")
 def admin_me(current_admin: Admin = Depends(get_current_admin)):
     """Test endpoint: returns the current authenticated admin's info."""
     return {"id": current_admin.id, "username": current_admin.username, "email": current_admin.email}

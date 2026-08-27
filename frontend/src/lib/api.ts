@@ -179,13 +179,13 @@ export const api = {
     request<Contract>(`/api/orders/${orderId}/contract/info`),
 
   getAdminContractInfo: (orderId: number) =>
-    request<Contract>(`/admin/orders/${orderId}/contract/info`),
+    request<Contract>(`/api/admin/orders/${orderId}/contract/info`),
 
   /* ========== 管理员 ========== */
 
   /** Admin login */
   adminLogin: (data: { username: string; password: string }) =>
-    request<{ access_token: string }>("/admin/auth/login", {
+    request<{ access_token: string }>("/api/admin/auth/login", {
       method: "POST",
       body: JSON.stringify(data),
     }),
@@ -193,43 +193,43 @@ export const api = {
   /** Get admin profile */
   adminMe: () =>
     adminRequest<{ id: number; username: string; email: string }>(
-      "/admin/auth/me"
+      "/api/admin/auth/me"
     ),
 
   /** Get dashboard stats */
-  getDashboard: () => adminRequest<DashboardStats>("/admin/dashboard"),
+  getDashboard: () => adminRequest<DashboardStats>("/api/admin/dashboard"),
 
   /* -- Spaces CRUD -- */
 
   /** List all spaces (admin, includes unpublished) */
   adminGetSpaces: (params?: Record<string, string>) =>
     adminRequest<PaginatedResponse<Space>>(
-      `/admin/spaces?${new URLSearchParams(params || {})}`
+      `/api/admin/spaces?${new URLSearchParams(params || {})}`
     ),
 
   /** Create a space */
   createSpace: (data: Partial<Space>) =>
-    adminRequest<Space>("/admin/spaces", {
+    adminRequest<Space>("/api/admin/spaces", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
   /** Update a space */
   updateSpace: (id: number, data: Partial<Space>) =>
-    adminRequest<Space>(`/admin/spaces/${id}`, {
+    adminRequest<Space>(`/api/admin/spaces/${id}`, {
       method: "PUT",
       body: JSON.stringify(data),
     }),
 
   /** Delete a space */
   deleteSpace: (id: number) =>
-    adminRequest<{ message: string }>(`/admin/spaces/${id}`, {
+    adminRequest<{ message: string }>(`/api/admin/spaces/${id}`, {
       method: "DELETE",
     }),
 
   /** Toggle space publish status */
   togglePublishSpace: (id: number) =>
-    adminRequest<Space>(`/admin/spaces/${id}/publish`, {
+    adminRequest<Space>(`/api/admin/spaces/${id}/publish`, {
       method: "PUT",
     }),
 
@@ -239,7 +239,7 @@ export const api = {
     const fileArray = Array.from(files);
     fileArray.forEach((file) => formData.append("files", file));
     return adminRequest<{ images: string[]; uploaded: string[] }>(
-      `/admin/spaces/${spaceId}/images`,
+      `/api/admin/spaces/${spaceId}/images`,
       {
         method: "POST",
         body: formData,
@@ -249,7 +249,7 @@ export const api = {
 
   /** Remove an image from a space */
   removeSpaceImage: (spaceId: number, imageUrl: string) =>
-    adminRequest<{ images: string[] }>(`/admin/spaces/${spaceId}/images`, {
+    adminRequest<{ images: string[] }>(`/api/admin/spaces/${spaceId}/images`, {
       method: "DELETE",
       body: JSON.stringify({ image_url: imageUrl }),
     }),
@@ -259,17 +259,17 @@ export const api = {
   /** List all orders (admin) */
   adminGetOrders: (params?: Record<string, string>) =>
     adminRequest<{ items: Order[]; total: number; page: number; page_size: number }>(
-      `/admin/orders?${new URLSearchParams(params || {})}`
+      `/api/admin/orders?${new URLSearchParams(params || {})}`
     ),
 
   /** Get order detail (admin) */
   adminGetOrder: (id: number) =>
-    adminRequest<Order & { space_name?: string }>(`/admin/orders/${id}`),
+    adminRequest<Order & { space_name?: string }>(`/api/admin/orders/${id}`),
 
   /** Update order status */
   updateOrderStatus: (id: number, status: string) =>
     adminRequest<{ message: string; status: string }>(
-      `/admin/orders/${id}/status`,
+      `/api/admin/orders/${id}/status`,
       {
         method: "PUT",
         body: JSON.stringify({ status }),
@@ -278,7 +278,7 @@ export const api = {
 
   /** Get contract info (admin) */
   getContractInfoAdmin: (orderId: number) =>
-    adminRequest<Contract>(`/admin/orders/${orderId}/contract/info`),
+    adminRequest<Contract>(`/api/admin/orders/${orderId}/contract/info`),
 
   /** Send manual notification */
   sendNotification: (data: {
@@ -287,7 +287,7 @@ export const api = {
     content: string;
     notif_type?: string;
   }) =>
-    adminRequest("/admin/notifications", {
+    adminRequest("/api/admin/notifications", {
       method: "POST",
       body: JSON.stringify(data),
     }),
