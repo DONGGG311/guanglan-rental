@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X, Building2 } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Menu, X, Building2, User, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { getStoredUser, isAuthenticated, logout } from "@/lib/auth";
+import type { User as UserType } from "@/types";
 
 const navLinks = [
   { href: "/", label: "首页" },
@@ -14,7 +16,33 @@ const navLinks = [
 
 export function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState<UserType | null>(null);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  // 读取登录状态，路由变化时刷新（登录/登出后跳转会触发）
+  useEffect(() => {
+    setUser(getStoredUser());
+    setLoggedIn(isAuthenticated());
+  }, [pathname]);
+
+  // 监听 auth-changed 事件（登出时触发）
+  useEffect(() => {
+    const handleAuthChange = () => {
+      setUser(getStoredUser());
+      setLoggedIn(isAuthenticated());
+    };
+    window.addEventListener("guanglan-auth-changed", handleAuthChange);
+    return () =>
+      window.removeEventListener("guanglan-auth-changed", handleAuthChange);
+  }, []);
+
+  const handleLogout = () => {
+    logout();
+    setMobileOpen(false);
+    router.push("/");
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
@@ -49,14 +77,36 @@ export function Navbar() {
 
         {/* 桌面右侧操作 */}
         <div className="hidden items-center gap-2 md:flex">
-          <Link href="/login">
-            <Button variant="ghost" size="sm">
-              登录
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button size="sm">注册</Button>
-          </Link>
+          {loggedIn ? (
+            <>
+              <Link href="/user/orders">
+                <Button variant="ghost" size="sm" className="gap-1.5">
+                  <User className="h-4 w-4" />
+                  {user?.name || "用户中心"}
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleLogout}
+                className="gap-1.5 text-slate-500 hover:text-slate-700"
+              >
+                <LogOut className="h-4 w-4" />
+                退出
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="ghost" size="sm">
+                  登录
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button size="sm">注册</Button>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* 移动端汉堡菜单 */}
@@ -93,26 +143,50 @@ export function Navbar() {
               </Link>
             ))}
             <hr className="my-2 border-slate-200" />
-            <div className="flex gap-2">
-              <Link
-                href="/login"
-                className="flex-1"
-                onClick={() => setMobileOpen(false)}
-              >
-                <Button variant="outline" className="w-full" size="sm">
-                  登录
+            {loggedIn ? (
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/user/orders"
+                  className="flex-1"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <Button variant="outline" className="w-full" size="sm">
+                    <User className="mr-1.5 h-4 w-4" />
+                    {user?.name || "用户中心"}
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  className="w-full text-slate-500"
+                  size="sm"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="mr-1.5 h-4 w-4" />
+                  退出登录
                 </Button>
-              </Link>
-              <Link
-                href="/register"
-                className="flex-1"
-                onClick={() => setMobileOpen(false)}
-              >
-                <Button className="w-full" size="sm">
-                  注册
-                </Button>
-              </Link>
-            </div>
+              </div>
+            ) : (
+              <div className="flex gap-2">
+                <Link
+                  href="/login"
+                  className="flex-1"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <Button variant="outline" className="w-full" size="sm">
+                    登录
+                  </Button>
+                </Link>
+                <Link
+                  href="/register"
+                  className="flex-1"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <Button className="w-full" size="sm">
+                    注册
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       )}

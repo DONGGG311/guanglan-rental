@@ -122,3 +122,11 @@ export interface NotificationItem {
   type: string;
   created_at: string | null;
 }
+
+export interface User {
+  id: number;
+  name: string;
+  phone: string;
+  email: string | null;
+  company: string | null;
+}

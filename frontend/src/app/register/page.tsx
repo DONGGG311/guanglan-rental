@@ -49,6 +49,7 @@ export default function RegisterPage() {
       } catch {
         // profile fetch is best-effort
       }
+      window.dispatchEvent(new Event("guanglan-auth-changed"));
       router.replace("/user/orders");
     } catch (err) {
       setError(err instanceof Error ? err.message : "注册失败，请稍后重试");

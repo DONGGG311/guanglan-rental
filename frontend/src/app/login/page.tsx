@@ -33,6 +33,7 @@ export default function LoginPage() {
       } catch {
         // profile fetch is best-effort
       }
+      window.dispatchEvent(new Event("guanglan-auth-changed"));
       router.replace("/user/orders");
     } catch (err) {
       setError(err instanceof Error ? err.message : "登录失败，请检查手机号和密码");
