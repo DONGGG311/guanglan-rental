@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Building2,
   ClipboardList,
+  Settings,
   ArrowLeft,
   Menu,
   X,
@@ -17,6 +18,7 @@ const navItems = [
   { href: "/admin", label: "仪表盘", icon: LayoutDashboard },
   { href: "/admin/spaces", label: "厂房管理", icon: Building2 },
   { href: "/admin/orders", label: "订单管理", icon: ClipboardList },
+  { href: "/admin/settings", label: "账号设置", icon: Settings },
 ];
 
 export function AdminSidebar() {

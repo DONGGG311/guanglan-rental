@@ -5,7 +5,13 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.models.user import Admin, User
-from app.schemas.user import AdminLogin, Token, UserLogin, UserRegister
+from app.schemas.user import (
+    AdminChangePassword,
+    AdminLogin,
+    Token,
+    UserLogin,
+    UserRegister,
+)
 from app.services.auth import (
     create_token,
     decode_token,
@@ -135,6 +141,25 @@ def me(current_user: User = Depends(get_current_user)):
 def admin_me(current_admin: Admin = Depends(get_current_admin)):
     """Test endpoint: returns the current authenticated admin's info."""
     return {"id": current_admin.id, "username": current_admin.username, "email": current_admin.email}
+
+
+@router.post("/api/admin/auth/change-password")
+def admin_change_password(
+    data: AdminChangePassword,
+    current_admin: Admin = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    """Change the current admin's password. Requires the old password."""
+    if not verify_password(data.old_password, current_admin.password_hash):
+        raise HTTPException(status_code=400, detail="原密码错误")
+    if data.new_password == data.old_password:
+        raise HTTPException(status_code=400, detail="新密码不能与原密码相同")
+    if len(data.new_password) < 8:
+        raise HTTPException(status_code=400, detail="新密码至少8位")
+
+    current_admin.password_hash = hash_password(data.new_password)
+    db.commit()
+    return {"message": "密码修改成功"}
 
 
 # ---------------------------------------------------------------------------

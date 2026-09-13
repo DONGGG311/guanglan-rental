@@ -196,6 +196,16 @@ export const api = {
       "/api/admin/auth/me"
     ),
 
+  /** Change the logged-in admin's password */
+  adminChangePassword: (data: {
+    old_password: string;
+    new_password: string;
+  }) =>
+    adminRequest<{ message: string }>("/api/admin/auth/change-password", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+
   /** Get dashboard stats */
   getDashboard: () => adminRequest<DashboardStats>("/api/admin/dashboard"),
 
