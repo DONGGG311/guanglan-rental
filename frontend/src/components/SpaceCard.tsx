@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MapPin, Building2 } from "lucide-react";
 import { STATUS_LABELS, type Space } from "@/types";
-import { cn, formatArea, formatMonthlyRent } from "@/lib/utils";
+import { cn, formatArea, formatMonthlyRent, parseImages } from "@/lib/utils";
 import { AreaBadge, AvailabilityBadge } from "./Badge";
 
 interface SpaceCardProps {
@@ -11,6 +11,8 @@ interface SpaceCardProps {
 
 export function SpaceCard({ space, className }: SpaceCardProps) {
   const isRented = space.status === "rented";
+  // 列表页只展示第一张图作为封面；无图时回退到占位图标
+  const coverImage = parseImages(space.images)[0];
 
   return (
     <Link
@@ -29,9 +31,18 @@ export function SpaceCard({ space, className }: SpaceCardProps) {
             </span>
           </div>
         )}
-        <div className="flex h-full w-full items-center justify-center">
-          <Building2 className="h-12 w-12 text-slate-400" />
-        </div>
+        {coverImage ? (
+          <img
+            src={coverImage}
+            alt={space.name}
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <Building2 className="h-12 w-12 text-slate-400" />
+          </div>
+        )}
       </div>
 
       {/* 信息区域 */}
