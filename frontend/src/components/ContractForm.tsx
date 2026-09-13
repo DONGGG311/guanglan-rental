@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { extractErrorMessage, openAdminContract } from "@/lib/api";
 
 interface ContractFormProps {
   open: boolean;
@@ -65,12 +66,13 @@ export function ContractForm({
 
     setSubmitting(true);
     try {
-      const token = localStorage.getItem("token");
+      // 管理端登录后存的是 admin_token，不是 token
+      const token = localStorage.getItem("admin_token");
       if (!token) {
-        throw new Error("未登录，请先以管理员身份登录");
+        throw new Error("登录已过期，请重新以管理员身份登录");
       }
 
-      const res = await fetch(`/admin/orders/${orderId}/contract`, {
+      const res = await fetch(`/api/admin/orders/${orderId}/contract`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,15 +88,14 @@ export function ContractForm({
       });
 
       if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || `请求失败 (${res.status})`);
+        throw new Error(await extractErrorMessage(res));
       }
-
-      // Open the generated contract in a new tab
-      window.open(`/admin/orders/${orderId}/contract`, "_blank");
 
       onOpenChange(false);
       onSuccess?.();
+
+      // 生成成功后在新标签页打开合同（失败不影响生成结果）
+      await openAdminContract(orderId).catch(() => {});
     } catch (err) {
       setError(err instanceof Error ? err.message : "生成合同失败");
     } finally {

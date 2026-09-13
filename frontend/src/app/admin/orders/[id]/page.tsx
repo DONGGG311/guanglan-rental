@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { api } from "@/lib/api";
+import { api, openAdminContract } from "@/lib/api";
 import type { Order, Contract } from "@/types";
 import { ORDER_STATUS_LABELS } from "@/types";
 import { ContractForm } from "@/components/ContractForm";
@@ -250,9 +250,15 @@ export default function AdminOrderDetailPage() {
               )}
               <div className="mt-3">
                 <button
-                  onClick={() =>
-                    window.open(`/admin/orders/${orderId}/contract`, "_blank")
-                  }
+                  onClick={async () => {
+                    try {
+                      await openAdminContract(orderId);
+                    } catch (err) {
+                      setError(
+                        err instanceof Error ? err.message : "打开合同失败"
+                      );
+                    }
+                  }}
                   className="flex items-center gap-1 rounded-lg bg-teal-700 px-3 py-1.5 text-xs font-medium text-white hover:bg-teal-800"
                 >
                   <FileText className="h-3.5 w-3.5" />

@@ -65,6 +65,51 @@ async function adminRequest<T>(
   return res.json();
 }
 
+/**
+ * 提取后端错误信息。
+ * 优先取 FastAPI 返回的 JSON `detail`；如果响应不是 JSON（例如 Next.js 的 404
+ * HTML 页面），则返回一句简短的提示，避免把整页 HTML 源码当成错误信息显示出来。
+ */
+export async function extractErrorMessage(res: Response): Promise<string> {
+  const text = await res.text();
+  try {
+    const data = JSON.parse(text);
+    if (typeof data?.detail === "string") return data.detail;
+    if (Array.isArray(data?.detail) && data.detail[0]?.msg) {
+      return String(data.detail[0].msg);
+    }
+  } catch {
+    // 不是 JSON，忽略
+  }
+  return `请求失败（HTTP ${res.status}）`;
+}
+
+/**
+ * 在新标签页打开某个订单的合同 HTML（管理端）。
+ *
+ * 合同接口需要 Authorization 头，而 window.open 只是普通页面跳转、带不上自定义头，
+ * 所以这里先用 fetch 把 HTML 取回来，再用 Blob URL 打开。
+ */
+export async function openAdminContract(orderId: number): Promise<void> {
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("admin_token") : null;
+
+  const res = await fetch(`/api/admin/orders/${orderId}/contract`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) {
+    throw new Error(await extractErrorMessage(res));
+  }
+
+  const html = await res.text();
+  const url = URL.createObjectURL(
+    new Blob([html], { type: "text/html;charset=utf-8" })
+  );
+  window.open(url, "_blank");
+  // 给新标签页留出加载时间后再释放
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
+}
+
 export interface DashboardStats {
   total_spaces: number;
   available_spaces: number;
