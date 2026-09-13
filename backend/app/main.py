@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -9,7 +10,14 @@ from app.database import engine, Base
 from app.models import user, space, order, contract, favorite, notification  # noqa: F401
 from app.routers import auth, orders, spaces, favorites, users, notifications, admin
 
-app = FastAPI(title="广澜租赁平台 API", version="1.0")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
+    yield
+
+
+app = FastAPI(title="广澜租赁平台 API", version="1.0", lifespan=lifespan)
 
 app.include_router(auth.router)
 app.include_router(spaces.router)
@@ -31,11 +39,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.on_event("startup")
-def startup():
-    Base.metadata.create_all(bind=engine)
 
 
 @app.get("/api/health")
