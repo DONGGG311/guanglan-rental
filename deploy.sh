@@ -50,8 +50,8 @@ cd "$APP_DIR/backend"
 python3 -m venv venv
 # shellcheck disable=SC1091
 source venv/bin/activate
-pip install -q --upgrade pip
-pip install -q -r requirements.txt
+pip install -q --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+pip install -q -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
 python3 seed.py
 
 sudo tee /etc/systemd/system/guanglan-api.service > /dev/null << 'SYSTEMD'
@@ -61,7 +61,7 @@ After=network.target
 
 [Service]
 Type=simple
-User=root
+User=ubuntu
 WorkingDirectory=/opt/guanglan-rental/backend
 Environment=PYTHONUNBUFFERED=1
 ExecStart=/opt/guanglan-rental/backend/venv/bin/python3 -m uvicorn app.main:app --host 127.0.0.1 --port 8000
@@ -85,6 +85,7 @@ echo "  后端已启动 ✅"
 # 5. 部署前端
 echo "[5/7] 部署前端（构建较慢，请耐心等待）..."
 cd "$APP_DIR/frontend"
+npm config set registry https://registry.npmmirror.com
 npm install --silent
 npm run build
 
@@ -93,7 +94,7 @@ pm2 delete guanglan-web 2>/dev/null || true
 pm2 start npm --name "guanglan-web" -- start
 pm2 save
 # 开机自启（失败不影响本次部署）
-sudo env PATH="$PATH" pm2 startup systemd -u root --hp /root > /dev/null 2>&1 || true
+sudo env PATH="$PATH" pm2 startup systemd -u ubuntu --hp /home/ubuntu > /dev/null 2>&1 || true
 echo "  前端已启动 ✅"
 
 # 6. 配置 Nginx
